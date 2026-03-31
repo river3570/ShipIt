@@ -1,279 +1,241 @@
-# ShipIt! 🚀
+# ShipIt!
 
-エンジニア向けポートフォリオ共有・探索プラットフォーム
+ポートフォリオ共有・探索サービス。
+
+主に初学者・転職活動中のエンジニアが、他者のポートフォリオを条件付きで検索・共有できるプラットフォームです。
+
+---
 
 ## 技術スタック
 
-### フロントエンド
-- Next.js 15 (App Router)
-- TypeScript
-- Tailwind CSS v4
-- Vitest
+| 領域 | 技術 |
+|---|---|
+| フロントエンド | Next.js 15 / Tailwind CSS / TypeScript |
+| バックエンド | Ruby 3.3.6 / Rails 8.1 (API モード) |
+| データベース | PostgreSQL 17 |
+| 認証 | Devise + devise-jwt (JTI Matcher) |
+| ストレージ（ローカル） | MinIO (S3 互換) |
+| テスト（BE） | RSpec |
+| テスト（FE） | Vitest + Testing Library |
+| 環境構築 | Docker / Docker Compose |
+| デプロイ（FE） | Vercel |
+| デプロイ（BE） | Render |
+| CI/CD | GitHub Actions |
 
-### バックエンド
-- Ruby 3.3.x
-- Rails 8 (API Mode)
-- RSpec
-
-### インフラ
-- PostgreSQL 17
-- MinIO (開発環境のS3互換ストレージ)
-- Docker & Docker Compose
-- AWS (本番環境)
-- GitHub Actions (CI/CD)
-
-## 環境構築
-
-### 必要な環境
-
-- Docker Desktop
-- Git
-
-### セットアップ手順
-
-1. **リポジトリのクローン**
-
-```bash
-git clone https://github.com/yourusername/shipit.git
-cd shipit
-```
-
-2. **環境変数ファイルの作成**
-
-```bash
-cp .env.example .env
-```
-
-3. **バックエンド・DB・MinIOのDockerコンテナ起動**
-
-```bash
-docker-compose up -d
-```
-
-初回起動時は以下の処理が自動で実行されます:
-- Rails依存関係のインストール
-- データベースの作成
-- マイグレーションの実行
-- シードデータの投入
-
-4. **フロントエンド (Next.js) のローカルセットアップ**
-
-```bash
-cd frontend
-
-# Node.js 22系がインストールされていることを確認
-node -v  # v22.x.x であること
-
-# 依存関係のインストール
-npm install
-
-# 環境変数ファイルの作成
-cp .env.local.example .env.local
-
-# 開発サーバーの起動
-npm run dev
-```
-
-5. **MinIOバケットの作成**
-
-MinIO Web Console (http://localhost:9001) にアクセス:
-- ユーザー名: `minioadmin`
-- パスワード: `minioadmin`
-
-Bucketsメニューから`shipit-dev`バケットを作成してください。
-
-6. **アプリケーションへのアクセス**
-
-- フロントエンド: http://localhost:3000 (ローカル)
-- バックエンド API: http://localhost:3001 (Docker)
-- MinIO Console: http://localhost:9001 (Docker)
-
-## 開発コマンド
-
-### 全体
-
-```bash
-# バックエンドコンテナ(API, DB, MinIO)を起動
-docker-compose up -d
-
-# ログを確認
-docker-compose logs -f
-
-# バックエンドコンテナを停止
-docker-compose down
-
-# ボリュームも含めて完全削除
-docker-compose down -v
-```
-
-### バックエンド (Docker)
-
-```bash
-# Railsコンソール
-docker-compose exec api rails c
-
-# マイグレーション実行
-docker-compose exec api rails db:migrate
-
-# シードデータ投入
-docker-compose exec api rails db:seed
-
-# テスト実行
-docker-compose exec api bundle exec rspec
-
-# Rubocop実行
-docker-compose exec api bundle exec rubocop
-
-# Rubocop自動修正
-docker-compose exec api bundle exec rubocop -A
-```
-
-### フロントエンド (ローカル)
-
-```bash
-# frontendディレクトリに移動
-cd frontend
-
-# 開発サーバー起動
-npm run dev
-
-# テスト実行
-npm run test
-
-# Lint実行
-npm run lint
-
-# Lint自動修正
-npm run lint:fix
-
-# 型チェック
-npm run type-check
-
-# 本番ビルド
-npm run build
-```
-
-### データベース
-
-```bash
-# PostgreSQLに接続
-docker-compose exec db psql -U postgres -d shipit_development
-
-# データベースリセット
-docker-compose exec api rails db:reset
-```
+---
 
 ## ディレクトリ構成
 
 ```
-shipit/
-├── frontend/          # Next.js (ローカル実行)
-├── backend/           # Rails API (Docker)
-├── .github/           # GitHub Actions CI/CD
-├── docker-compose.yml # Docker構成 (Backend, DB, MinIO)
+ShipIt/
+├── backend/          # Rails 8.1 API
+├── frontend/         # Next.js 15
+├── docker-compose.yml
+├── docs/
+│   └── 設計書/
+│       ├── 要件定義書.md
+│       ├── DB設計書.md
+│       └── ER図.md
 └── README.md
 ```
 
-## 環境別設定
+---
 
-### Development (ローカル)
-- **フロントエンド**: ローカルで実行 (http://localhost:3000)
-- **バックエンド**: Docker (http://localhost:3001)
-- **データベース**: Docker PostgreSQL
-- **ストレージ**: Docker MinIO (http://localhost:9000)
+## ローカル環境構築
 
-### Staging
-- データベース: AWS RDS
-- ストレージ: AWS S3
-- ホスティング: AWS ECS (Fargate)
+### 前提条件
 
-### Production
-- データベース: AWS RDS
-- ストレージ: AWS S3
-- ホスティング: AWS ECS (Fargate)
-- CDN: CloudFront
+- Docker Desktop（または Docker Engine + Docker Compose v2）
 
-## CI/CD
+### 手順
 
-GitHub Actionsで以下を自動実行:
-
-- **Lint**: ESLint, Rubocop
-- **Test**: Vitest (Frontend), RSpec (Backend)
-- **Build**: Docker images
-- **Deploy**: AWS ECS (mainブランチへのマージ時)
-
-## トラブルシューティング
-
-### ポートが既に使用されている
+**1. リポジトリをクローン**
 
 ```bash
-# バックエンド・DBのポート確認
-lsof -i :3001  # Rails API
-lsof -i :5432  # PostgreSQL
-lsof -i :9000  # MinIO API
-lsof -i :9001  # MinIO Console
-
-# フロントエンドのポート確認
-lsof -i :3000  # Next.js
-
-# プロセスを停止して再度実行
-docker-compose down
-docker-compose up -d
-
-# フロントエンドは別途起動
-cd frontend && npm run dev
+git clone <repository-url>
+cd ShipIt
 ```
 
-### フロントエンドがバックエンドに接続できない
+**2. 環境変数ファイルを作成**
 
 ```bash
-# バックエンドが起動しているか確認
-docker-compose ps api
-
-# バックエンドログ確認
-docker-compose logs api
-
-# CORS設定を確認
-# backend/config/initializers/cors.rb を確認
+cp backend/.env.example backend/.env
 ```
 
-### データベース接続エラー
+> 開発環境ではダミー値が `.env.example` に入っているため、そのままコピーで動作します。
+
+**3. フロントエンドの環境変数を作成**
 
 ```bash
-# データベースコンテナの状態確認
-docker-compose ps db
-
-# データベースログ確認
-docker-compose logs db
-
-# データベースの再作成
-docker-compose down -v
-docker-compose up -d
+cp frontend/.env.local.example frontend/.env.local
 ```
 
-### MinIOにアクセスできない
+**4. Docker イメージをビルド**
 
 ```bash
-# MinIOコンテナの状態確認
-docker-compose ps minio
-
-# MinIOログ確認
-docker-compose logs minio
-
-# MinIO再起動
-docker-compose restart minio
+docker compose build
 ```
 
-### フロントエンドの依存関係エラー
+**5. コンテナを起動**
+
+```bash
+docker compose up
+```
+
+初回起動時は自動で以下が実行されます。
+
+- `bundle install`
+- `rails db:prepare`（DB 作成 + マイグレーション + seed データ投入）
+
+**6. フロントエンドを起動（別ターミナル）**
 
 ```bash
 cd frontend
-
-# node_modulesを削除して再インストール
-rm -rf node_modules package-lock.json
 npm install
-
-# キャッシュクリア
-rm -rf .next
 npm run dev
 ```
+
+### アクセス先
+
+| サービス | URL |
+|---|---|
+| フロントエンド | http://localhost:3000 |
+| Rails API | http://localhost:3001 |
+| MinIO コンソール | http://localhost:9001 |
+
+> MinIO の初期ログイン: `minioadmin` / `minioadmin`
+
+---
+
+## API エンドポイント（認証）
+
+| メソッド | パス | 説明 |
+|---|---|---|
+| POST | `/api/v1/auth/sign_up` | 新規登録 |
+| POST | `/api/v1/auth/sign_in` | ログイン（JWT 発行） |
+| DELETE | `/api/v1/auth/sign_out` | ログアウト（JWT 無効化） |
+
+JWT は `Authorization: Bearer <token>` ヘッダーで送信します。
+
+---
+
+## データベース
+
+### マイグレーション
+
+```bash
+# コンテナ内で実行
+docker compose exec api bundle exec rails db:migrate
+
+# マイグレーションをロールバック
+docker compose exec api bundle exec rails db:rollback
+```
+
+### シードデータの再投入
+
+```bash
+docker compose exec api bundle exec rails db:seed
+```
+
+### テーブル一覧
+
+**コアテーブル**
+
+| テーブル | 説明 |
+|---|---|
+| `users` | ユーザー（Devise） |
+| `portfolios` | ポートフォリオ投稿 |
+| `follows` | フォロー関係 |
+| `portfolio_reactions` | いいね |
+
+**マスタテーブル（選択肢）**
+
+`feature_options` / `frontend_options` / `backend_options` / `db_options` / `test_options` / `cicd_options` / `infra_options` / `deploy_front_options` / `deploy_api_options` / `deploy_db_options` / `target_categories` / `interview_feedback_options` / `experience_level_options`
+
+**中間テーブル**
+
+`portfolio_features` / `portfolio_frontends` / `portfolio_backends` / `portfolio_databases` / `portfolio_tests` / `portfolio_cicds` / `portfolio_infras` / `portfolio_deploy_fronts` / `portfolio_deploy_apis` / `portfolio_deploy_dbs` / `portfolio_interview_feedbacks`
+
+---
+
+## テスト
+
+**バックエンド（RSpec）**
+
+```bash
+docker compose exec api bundle exec rspec
+```
+
+**フロントエンド（Vitest）**
+
+```bash
+cd frontend
+npm test              # ウォッチモード
+npm run test:coverage # カバレッジ付き
+```
+
+---
+
+## 開発時のよく使うコマンド
+
+```bash
+# コンテナに入る
+docker compose exec api bash
+
+# Rails コンソール
+docker compose exec api bundle exec rails c
+
+# ログを見る
+docker compose logs -f api
+
+# コンテナを止める
+docker compose down
+
+# イメージも含めて全削除（キャッシュ問題が起きたとき）
+docker compose down --rmi local -v
+docker compose build --no-cache
+```
+
+---
+
+## 環境変数一覧
+
+### `backend/.env`
+
+| 変数名 | 説明 | デフォルト値 |
+|---|---|---|
+| `DATABASE_HOST` | PostgreSQL ホスト | `db` |
+| `DATABASE_USER` | PostgreSQL ユーザー | `postgres` |
+| `DATABASE_PASSWORD` | PostgreSQL パスワード | `postgres` |
+| `DATABASE_NAME` | DB 名 | `shipit_development` |
+| `AWS_ACCESS_KEY_ID` | MinIO アクセスキー | `minioadmin` |
+| `AWS_SECRET_ACCESS_KEY` | MinIO シークレット | `minioadmin` |
+| `AWS_ENDPOINT` | MinIO エンドポイント | `http://minio:9000` |
+| `AWS_BUCKET` | バケット名 | `shipit-dev` |
+| `FRONTEND_URL` | CORS 許可オリジン | `http://localhost:3000` |
+| `DEVISE_JWT_SECRET_KEY` | JWT 署名キー | （開発用ダミー値） |
+
+### `frontend/.env.local`
+
+| 変数名 | 説明 | デフォルト値 |
+|---|---|---|
+| `NEXT_PUBLIC_API_URL` | Rails API のベース URL | `http://localhost:3001/api/v1` |
+
+---
+
+## トラブルシューティング
+
+**`docker compose up` 時に `docker-entrypoint` が見つからないエラーが出る**
+
+古いキャッシュイメージが残っています。以下で解消できます。
+
+```bash
+docker compose down --rmi local -v
+docker compose build --no-cache
+docker compose up
+```
+
+**DB 接続エラーが出る**
+
+DB コンテナの起動が完了する前に API が起動しようとする場合があります。
+`docker compose up` を再実行するか、しばらく待ってから起動してください。

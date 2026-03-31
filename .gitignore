@@ -1,53 +1,20 @@
-# Root environment files
-/.env
-/.env.*
-!/.env.example
+# 環境変数（絶対にコミットしない）
+backend/.env
+frontend/.env.local
 
-# OS and editor
+# Node
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Ruby / Rails
+backend/log/
+backend/tmp/
+backend/storage/
+backend/.bundle/
+backend/vendor/bundle/
+backend/public/system/
+
+# OS
 .DS_Store
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Logs and debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Frontend (Next.js)
-/frontend/node_modules/
-/frontend/.pnp
-/frontend/.pnp.js
-/frontend/coverage/
-/frontend/.next/
-/frontend/out/
-/frontend/build/
-/frontend/*.pem
-/frontend/.env
-/frontend/.env*.local
-/frontend/.vercel/
-/frontend/*.tsbuildinfo
-/frontend/next-env.d.ts
-
-# Backend (Rails)
-/backend/.bundle/
-/backend/log/*
-!/backend/log/.keep
-/backend/tmp/*
-!/backend/tmp/.keep
-/backend/tmp/pids/*
-!/backend/tmp/pids/
-!/backend/tmp/pids/.keep
-/backend/storage/*
-!/backend/storage/.keep
-/backend/tmp/storage/*
-!/backend/tmp/storage/
-!/backend/tmp/storage/.keep
-/backend/config/master.key
-/backend/config/credentials/*.key
-/backend/spec/examples.txt
-/backend/coverage/
-/backend/.env
-/backend/.env.*
-!/backend/.env.example
+Thumbs.db
